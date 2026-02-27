@@ -1,0 +1,74 @@
+flowchart TD
+    User(["👤 Business User\n(Browser)"])
+
+    subgraph Streamlit["🌐 Streamlit Web Application (app.py)"]
+        Input["💬 Chat Input\nst.chat_input()"]
+        Sidebar["🔧 Sidebar Filters\nYear / Region / Category"]
+        Display["📊 Results Display\nChart + Table + Insight + Follow-ups"]
+    end
+
+    subgraph DataLayer["🗄️ Data Layer (data_utils.py)"]
+        Cache["⚡ Cached DataFrame\nst.cache_data"]
+        CSV["📄 global_retail_sales.csv\n10,000 rows · 2022–2024"]
+        Exec["🔒 Safe exec()\npandas code sandbox"]
+    end
+
+    subgraph PromptLayer["📝 Prompt Layer (prompts.py)"]
+        SysPrompt["📋 System Prompt\nSchema + OLAP Definitions\n+ JSON Contract"]
+        History["🕓 Chat History\nMulti-turn context"]
+    end
+
+    subgraph LLM["🤖 Groq API (LLaMA 3.3 70B)"]
+        Groq["⚡ Groq Inference\nFree tier · Global access"]
+    end
+
+    subgraph JSONResponse["📦 JSON Response"]
+        Op["operation\nslice · dice · drill_down\ngroup_summarize · compare"]
+        Code["pandas_code\ndf_result = df.groupby..."]
+        Chart["chart_type + config\nbar · line · pie · table"]
+        Insight["insight\nBusiness narrative"]
+        Followups["follow_ups\n3 suggested questions"]
+    end
+
+    subgraph OLAPOps["🔷 OLAP Operations"]
+        Slice["🔪 Slice\nSingle filter"]
+        Dice["🎲 Dice\nMulti filter"]
+        GroupSum["📊 Group & Summarize\ngroupby + agg"]
+        DrillDown["🔍 Drill-Down\nYear → Quarter → Month"]
+        RollUp["⬆️ Roll-Up\nDetail → Summary"]
+        Compare["⚖️ Compare\n2023 vs 2024"]
+    end
+
+    subgraph Viz["📈 Visualization (Plotly)"]
+        Bar["Bar Chart"]
+        Line["Line Chart"]
+        Pie["Pie Chart"]
+        Table["Data Table"]
+    end
+
+    User -->|"asks question"| Input
+    Sidebar -->|"pre-filters df"| Cache
+    CSV -->|"loaded once"| Cache
+    Input --> History
+    History --> SysPrompt
+    SysPrompt -->|"full context"| Groq
+    Groq --> JSONResponse
+    Op --> OLAPOps
+    Code -->|"executed against\nfiltered df"| Exec
+    Cache --> Exec
+    Exec -->|"df_result"| Viz
+    Chart --> Viz
+    Insight --> Display
+    Followups --> Display
+    Viz --> Display
+    Display -->|"shows results"| User
+    Followups -->|"click to re-query"| Input
+
+    style Streamlit fill:#EFF6FF,stroke:#2E75B6,stroke-width:2px
+    style DataLayer fill:#F0FDF4,stroke:#16A34A,stroke-width:2px
+    style PromptLayer fill:#FFFBEB,stroke:#D97706,stroke-width:2px
+    style LLM fill:#F5F3FF,stroke:#7C3AED,stroke-width:2px
+    style JSONResponse fill:#FFF1F2,stroke:#E11D48,stroke-width:2px
+    style OLAPOps fill:#F0F9FF,stroke:#0284C7,stroke-width:2px
+    style Viz fill:#FDF4FF,stroke:#9333EA,stroke-width:2px
+    style User fill:#1F3864,color:#FFFFFF,stroke:#1F3864
